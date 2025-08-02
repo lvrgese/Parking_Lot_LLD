@@ -7,11 +7,11 @@ import java.util.*;
 
 public class ParkingFloor {
 
-    private final String floorNumber;
+    private final int floorNumber;
     private boolean isFloorUnderMaintenance;
     private final Map<SpotType, Map<String,ParkingSpot>> parkingSpots; //Map<SpotType,Map<SpotId,ParkingSpot>>
 
-    public ParkingFloor(String floorNumber) {
+    public ParkingFloor(int floorNumber) {
         this.floorNumber = floorNumber;
         isFloorUnderMaintenance = false;
         parkingSpots = new HashMap<>();
@@ -44,6 +44,7 @@ public class ParkingFloor {
     }
 
     public ParkingSpot getRandomFreeSpot(SpotType type){
+        if(isFloorUnderMaintenance) return null;
         Map<String,ParkingSpot> spotMap = parkingSpots.get(type);
         if(spotMap == null) return null;
 
@@ -63,7 +64,7 @@ public class ParkingFloor {
         isFloorUnderMaintenance = floorUnderMaintenance;
     }
 
-    public String getFloorNumber() {
+    public int getFloorNumber() {
         return floorNumber;
     }
 }

@@ -25,6 +25,7 @@ public class PaymentProcessor {
     public boolean processPayment(int amount, PaymentType type ){
         if(!strategies.containsKey(type)){
             System.err.println("Invalid payment type");
+            return false;
         }
 
         return strategies.get(type).processPayment(amount);

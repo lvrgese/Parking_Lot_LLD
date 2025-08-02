@@ -30,12 +30,13 @@ public class ParkingSpot {
         return vehicle;
     }
 
-    public void setVehicle(Vehicle vehicle) {
+    public void occupy(Vehicle vehicle){
         this.vehicle = vehicle;
+        isAvailable = false;
     }
 
-    public void setAvailable(boolean available) {
-        isAvailable = available;
-        vehicle = null;
+    public void release(){
+        this.vehicle = null;
+        isAvailable = true;
     }
 }

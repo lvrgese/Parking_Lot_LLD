@@ -1,7 +1,7 @@
 package org.parkinglot.panel;
 
 import org.parkinglot.entity.ParkingTicket;
-import org.parkinglot.entity.Reciept;
+import org.parkinglot.entity.Receipt;
 import org.parkinglot.event.VehicleExitEvent;
 import org.parkinglot.payment.PaymentProcessor;
 import org.parkinglot.payment.PaymentType;
@@ -27,17 +27,16 @@ public class ExitPanel {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public Reciept processVehicleExit(ParkingTicket ticket, PaymentType paymentType){
+    public Receipt processVehicleExit(ParkingTicket ticket, PaymentType paymentType){
         if(ticket == null)
             return null;
         int fee = costCalculator.calculateFee(ticket);
-        if(!paymentProcessor.processPayment(fee,paymentType)){
-            throw new RuntimeException("Payment unsuccessful");
+        if (!paymentProcessor.processPayment(fee,paymentType)){
+            System.err.println("Payment failed,try again");
+            return null;
         }
-
-        ticket.parkingSpot().setAvailable(true);
-
+        ticket.parkingSpot().release();
         applicationEventPublisher.publishEvent(new VehicleExitEvent(this,ticket.ticketId()));
-        return new Reciept(ticket.vehicle().registrationNumber(),fee,paymentType, LocalDateTime.now());
+        return new Receipt(ticket.vehicle().registrationNumber(),fee,paymentType, LocalDateTime.now());
     }
 }
