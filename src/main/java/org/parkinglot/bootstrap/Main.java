@@ -1,7 +1,6 @@
 package org.parkinglot.bootstrap;
 
 import org.parkinglot.config.AppConfig;
-import org.parkinglot.service.CostCalculator;
 import org.parkinglot.service.WelcomeService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

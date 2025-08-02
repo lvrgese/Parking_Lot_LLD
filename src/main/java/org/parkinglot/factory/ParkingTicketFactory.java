@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @Component
 public class ParkingTicketFactory {
+
     public ParkingTicket createTicket(Vehicle vehicle, ParkingSpot spot) {
 
         String ticketId = UUID.randomUUID().toString();

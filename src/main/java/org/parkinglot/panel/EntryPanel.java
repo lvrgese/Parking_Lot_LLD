@@ -4,9 +4,11 @@ import org.parkinglot.entity.ParkingSpot;
 import org.parkinglot.entity.ParkingTicket;
 import org.parkinglot.entity.Vehicle;
 import org.parkinglot.entity.VehicleType;
+import org.parkinglot.event.VehicleExitEvent;
 import org.parkinglot.factory.ParkingTicketFactory;
 import org.parkinglot.service.ParkingLot;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -30,8 +32,11 @@ public class EntryPanel {
         Vehicle vehicle = new Vehicle(registrationNumber,type);
         ParkingSpot spot =parkingLot.getParkingSpot(vehicle);
         if(spot == null){
-            System.out.println("Slot is not available at the moment");//TODO-Replace with exception
+            System.err.println("Slot is not available at the moment");
             return null;
+        }
+        if(!spot.isAvailable()){
+            throw new RuntimeException("Spot is already occupied");
         }
         spot.setVehicle(vehicle);
         ParkingTicket ticket=  parkingTicketFactory.createTicket(vehicle,spot);
@@ -39,8 +44,8 @@ public class EntryPanel {
         return ticket;
     }
 
-    //TODO-Trigger it with events
-    public ParkingTicket removeActiveTicket(String id){
-        return activeTickets.remove(id);
+    @EventListener
+    public ParkingTicket removeActiveTicket(VehicleExitEvent event){
+        return activeTickets.remove(event.getTicketId());
     }
 }
