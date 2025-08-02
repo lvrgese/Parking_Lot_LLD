@@ -1,0 +1,69 @@
+package org.parkinglot.service;
+
+import org.parkinglot.entity.ParkingSpot;
+import org.parkinglot.entity.SpotType;
+
+import java.util.*;
+
+public class ParkingFloor {
+
+    private final String floorNumber;
+    private boolean isFloorUnderMaintenance;
+    private final Map<SpotType, Map<String,ParkingSpot>> parkingSpots; //Map<SpotType,Map<SpotId,ParkingSpot>>
+
+    public ParkingFloor(String floorNumber) {
+        this.floorNumber = floorNumber;
+        isFloorUnderMaintenance = false;
+        parkingSpots = new HashMap<>();
+    }
+
+    public ParkingSpot createNewSpot(SpotType type){
+        Map<String,ParkingSpot> spots;
+        if(parkingSpots.containsKey(type)){
+            spots = parkingSpots.get(type);
+        }
+        else{
+            spots = new HashMap<>();
+            parkingSpots.put(type,spots);
+        }
+        ParkingSpot spot = new ParkingSpot(UUID.randomUUID().toString(),type);
+        spots.put(spot.getSpotId(),spot);
+        return spot;
+    }
+
+    public ParkingSpot removeParkingSpot(SpotType type, String spotId){
+        Map<String,ParkingSpot> spots = parkingSpots.get(type);
+        if(spots == null)
+            return null;
+        ParkingSpot spot = spots.get(spotId);
+        if(spot != null){
+            spots.remove(spotId);
+            return spot;
+        }
+        return null;
+    }
+
+    public ParkingSpot getRandomFreeSpot(SpotType type){
+        Map<String,ParkingSpot> spotMap = parkingSpots.get(type);
+        if(spotMap == null) return null;
+
+        for(Map.Entry<String,ParkingSpot> entry : spotMap.entrySet() ){
+            if(entry.getValue().isAvailable())
+                return entry.getValue();
+        }
+        return null;
+    }
+
+
+    public boolean isFloorUnderMaintenance() {
+        return isFloorUnderMaintenance;
+    }
+
+    public void setFloorUnderMaintenance(boolean floorUnderMaintenance) {
+        isFloorUnderMaintenance = floorUnderMaintenance;
+    }
+
+    public String getFloorNumber() {
+        return floorNumber;
+    }
+}
