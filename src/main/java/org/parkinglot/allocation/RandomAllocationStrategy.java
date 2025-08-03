@@ -4,7 +4,6 @@ import org.parkinglot.entity.ParkingSpot;
 import org.parkinglot.entity.SpotType;
 import org.parkinglot.entity.Vehicle;
 import org.parkinglot.entity.VehicleType;
-import org.parkinglot.factory.ParkingTicketFactory;
 import org.parkinglot.service.ParkingFloor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
