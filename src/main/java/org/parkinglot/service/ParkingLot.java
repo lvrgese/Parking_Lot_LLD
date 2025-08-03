@@ -48,23 +48,6 @@ public class ParkingLot {
         return  floor;
     }
 
-    public boolean setParkingFloorUnderMaintenance(int floorNumber, boolean value){
-        ParkingFloor item = null;
-        for(ParkingFloor f : parkingFloors){
-            if(f.getFloorNumber() == floorNumber){
-                item =f;
-                break;
-            }
-        }
-        if(item == null) {
-            logger.error("Invalid floor number {}", floorNumber);
-            return false;
-        }
-        item.setFloorUnderMaintenance(value);
-        logger.info("Floor [{}] is set to maintenance",floorNumber);
-        return true;
-    }
-
 
     @EventListener
     public void addParkingTicket(ParkingTicketGeneratedEvent event){

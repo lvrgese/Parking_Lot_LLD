@@ -27,7 +27,7 @@ public class EntryPanel {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public ParkingTicket processVehicleEntry(String registrationNumber, VehicleType type){
+    public ParkingTicket parkNewVehicle(String registrationNumber, VehicleType type){
 
         logger.info("Entry requested for vehicle [{}]", registrationNumber);
         Vehicle vehicle = new Vehicle(registrationNumber,type);

@@ -29,9 +29,11 @@ public class ExitPanel {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public Receipt processVehicleExit(ParkingTicket ticket, PaymentType paymentType){
-        if(ticket == null)
+    public Receipt releaseVehicle(ParkingTicket ticket, PaymentType paymentType){
+        if(ticket == null || !ticket.isActive()) {
+            logger.error("Invalid Ticket");
             return null;
+        }
         logger.info("Exit requested for ticket [{}]", ticket.ticketId());
 
         int fee = costCalculator.calculateFee(ticket);
@@ -41,6 +43,7 @@ public class ExitPanel {
             return null;
         }
         ticket.parkingSpot().release();
+        ticket.setInactive();
         applicationEventPublisher.publishEvent(new VehicleExitEvent(this,ticket.ticketId()));
         Receipt receipt = new Receipt(ticket.vehicle().registrationNumber(),fee,paymentType, LocalDateTime.now());
         logger.info("Receipt  generated for ticket [{}]",  ticket.ticketId());

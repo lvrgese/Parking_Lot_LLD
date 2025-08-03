@@ -3,7 +3,6 @@ package org.parkinglot.factory;
 import org.parkinglot.entity.ParkingSpot;
 import org.parkinglot.entity.ParkingTicket;
 import org.parkinglot.entity.Vehicle;
-import org.parkinglot.panel.ExitPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -19,7 +18,7 @@ public class ParkingTicketFactory {
         String ticketId = UUID.randomUUID().toString();
         LocalDateTime entryTime = LocalDateTime.now();
 
-        ParkingTicket ticket = new ParkingTicket(ticketId,entryTime,spot,vehicle );
+        ParkingTicket ticket = new ParkingTicket(ticketId,entryTime,spot,vehicle);
         logger.info("Parking ticket generated for vehicle [{}] with Id [{}] . Parking spot assigned : [{}]",vehicle.registrationNumber(),
                 ticket.ticketId(),ticket.parkingSpot().getSpotId());
         return ticket;

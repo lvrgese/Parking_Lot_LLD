@@ -2,7 +2,6 @@ package org.parkinglot.service;
 
 import org.parkinglot.entity.ParkingSpot;
 import org.parkinglot.entity.SpotType;
-import org.parkinglot.payment.PaymentProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +20,7 @@ public class ParkingFloor {
         parkingSpots = new HashMap<>();
     }
 
-    public ParkingSpot createNewSpot(SpotType type){
+    public ParkingSpot addNewParkingSpot(SpotType type){
         Map<String,ParkingSpot> spots;
         if(parkingSpots.containsKey(type)){
             spots = parkingSpots.get(type);
@@ -42,6 +41,11 @@ public class ParkingFloor {
             return null;
         ParkingSpot spot = spots.get(spotId);
         if(spot != null){
+
+            if(!spot.isAvailable()){
+                logger.error("Parking spot is occupied at the moment . Spot Id [{}]",spot.getSpotId());
+                return null;
+            }
             spots.remove(spotId);
             logger.info("Parking spot has been removed from Parking lot with Id [{}] and with Size [{}]",spot.getSpotId(),spot.getSpotType());
             return spot;
@@ -66,15 +70,33 @@ public class ParkingFloor {
         return isFloorUnderMaintenance;
     }
 
-    public void setFloorUnderMaintenance(boolean floorUnderMaintenance) {
-        isFloorUnderMaintenance = floorUnderMaintenance;
-        if(floorUnderMaintenance)
-            logger.info("Parking floor [{}] is set to under maintenance",floorNumber);
-        else
-            logger.info("Parking floor [{}] is set to active",floorNumber);
+    public void setFloorActive() {
+        isFloorUnderMaintenance = false;
+        logger.info("Parking floor [{}] is set to active",floorNumber);
+    }
+
+    public void setFloorUnderMaintenance(){
+
+        if(!isFloorEmpty()){
+            logger.error("Can't set floor to maintenance. Floor is not empty");
+            return ;
+        }
+        logger.info("Parking floor [{}] is set to under maintenance", floorNumber);
+        isFloorUnderMaintenance = true;
     }
 
     public int getFloorNumber() {
         return floorNumber;
+    }
+
+    public boolean isFloorEmpty(){
+        for(Map<String,ParkingSpot> spotMap : parkingSpots.values()){
+            for(ParkingSpot p : spotMap.values()){
+                if(!p.isAvailable()){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
