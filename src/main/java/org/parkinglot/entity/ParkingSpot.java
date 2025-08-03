@@ -1,12 +1,16 @@
 package org.parkinglot.entity;
 
+import org.parkinglot.service.CostCalculator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ParkingSpot {
 
     private final String spotId;
     private final SpotType spotType;
     private boolean isAvailable;
     private Vehicle vehicle;
-
+    private static final Logger logger = LoggerFactory.getLogger(ParkingSpot.class);
     public ParkingSpot(String spotId, SpotType spotType) {
         this.spotId = spotId;
         this.spotType = spotType;
@@ -33,10 +37,12 @@ public class ParkingSpot {
     public void occupy(Vehicle vehicle){
         this.vehicle = vehicle;
         isAvailable = false;
+        logger.info("Vehicle parked in spot [{}]",spotId);
     }
 
     public void release(){
         this.vehicle = null;
         isAvailable = true;
+        logger.info("Vehicle exited from spot [{}]",spotId);
     }
 }

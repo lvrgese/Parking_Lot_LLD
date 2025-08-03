@@ -6,6 +6,8 @@ import org.parkinglot.entity.ParkingTicket;
 import org.parkinglot.entity.Vehicle;
 import org.parkinglot.event.ParkingTicketGeneratedEvent;
 import org.parkinglot.event.VehicleExitEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ public class ParkingLot {
     private final Map<String, ParkingTicket> activeTickets;
     private int currentFloor;
 
+    private static final Logger logger = LoggerFactory.getLogger(ParkingLot.class);
+
     @Autowired
     public ParkingLot(AllocationStrategy allocationStrategy) {
         this.allocationStrategy = allocationStrategy;
@@ -39,6 +43,8 @@ public class ParkingLot {
 
         ParkingFloor floor = new ParkingFloor(currentFloor++);
         parkingFloors.add(floor);
+
+        logger.info("New Parking floor is added with Id : {}",floor.getFloorNumber());
         return  floor;
     }
 
@@ -51,10 +57,11 @@ public class ParkingLot {
             }
         }
         if(item == null) {
-            System.err.println("Invalid floor number");
+            logger.error("Invalid floor number {}", floorNumber);
             return false;
         }
         item.setFloorUnderMaintenance(value);
+        logger.info("Floor [{}] is set to maintenance",floorNumber);
         return true;
     }
 
@@ -62,10 +69,14 @@ public class ParkingLot {
     @EventListener
     public void addParkingTicket(ParkingTicketGeneratedEvent event){
         activeTickets.put(event.getTicket().ticketId(),event.getTicket());
+        logger.info("Parking ticket with Id [{}] has been added to Parking Lot",event.getTicket().ticketId());
     }
 
     @EventListener
     public ParkingTicket removeActiveTicket(VehicleExitEvent event){
-        return activeTickets.remove(event.getTicketId());
+
+        ParkingTicket t = activeTickets.remove(event.getTicketId());
+        logger.info("Parking ticket with Id [{}] has been removed from Parking Lot",t.ticketId());
+        return t;
     }
 }

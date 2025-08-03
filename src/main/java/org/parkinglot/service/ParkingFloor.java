@@ -2,6 +2,9 @@ package org.parkinglot.service;
 
 import org.parkinglot.entity.ParkingSpot;
 import org.parkinglot.entity.SpotType;
+import org.parkinglot.payment.PaymentProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -10,6 +13,7 @@ public class ParkingFloor {
     private final int floorNumber;
     private boolean isFloorUnderMaintenance;
     private final Map<SpotType, Map<String,ParkingSpot>> parkingSpots; //Map<SpotType,Map<SpotId,ParkingSpot>>
+    private static final Logger logger = LoggerFactory.getLogger(ParkingFloor.class);
 
     public ParkingFloor(int floorNumber) {
         this.floorNumber = floorNumber;
@@ -28,6 +32,7 @@ public class ParkingFloor {
         }
         ParkingSpot spot = new ParkingSpot(UUID.randomUUID().toString(),type);
         spots.put(spot.getSpotId(),spot);
+        logger.info("New parking spot has been created with Id [{}] and with Size [{}]",spot.getSpotId(),spot.getSpotType());
         return spot;
     }
 
@@ -38,6 +43,7 @@ public class ParkingFloor {
         ParkingSpot spot = spots.get(spotId);
         if(spot != null){
             spots.remove(spotId);
+            logger.info("Parking spot has been removed from Parking lot with Id [{}] and with Size [{}]",spot.getSpotId(),spot.getSpotType());
             return spot;
         }
         return null;
@@ -62,6 +68,10 @@ public class ParkingFloor {
 
     public void setFloorUnderMaintenance(boolean floorUnderMaintenance) {
         isFloorUnderMaintenance = floorUnderMaintenance;
+        if(floorUnderMaintenance)
+            logger.info("Parking floor [{}] is set to under maintenance",floorNumber);
+        else
+            logger.info("Parking floor [{}] is set to active",floorNumber);
     }
 
     public int getFloorNumber() {

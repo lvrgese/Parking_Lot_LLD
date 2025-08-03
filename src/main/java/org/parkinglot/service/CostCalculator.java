@@ -1,6 +1,9 @@
 package org.parkinglot.service;
 
 import org.parkinglot.entity.ParkingTicket;
+import org.parkinglot.payment.PaymentProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Component;
@@ -18,6 +21,8 @@ public class CostCalculator {
     private int costPerHourForLarge;
     @Value("${per.hour.x_large}")
     private int costPerHourForXLarge;
+    private static final Logger logger = LoggerFactory.getLogger(CostCalculator.class);
+
 
     public int calculateFee(ParkingTicket ticket) {
         LocalDateTime entryTime = ticket.parkedTime();
@@ -33,6 +38,8 @@ public class CostCalculator {
             case HEAVY_VEHICLE -> costPerHourForXLarge;
         };
 
-        return (int) hours*rate;
+        int total=  (int) hours*rate;
+        logger.info("Cost calculated as [{}] INR for Vehicle [{}] , TicketID - [{}]",total,ticket.vehicle(),ticket.ticketId());
+        return total;
     }
 }
